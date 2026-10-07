@@ -150,5 +150,10 @@ class Assignment(models.Model):
     hour = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
     reason = models.TextField(blank=True)
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['employee', 'date', 'hour'], name='unique_employee_date_hour'),
+        ]
+
     def __str__(self):
         return f'{self.employee} -> {self.zone} {self.date} {self.hour:02d}:00'
