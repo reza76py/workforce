@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
 
@@ -91,3 +92,25 @@ class Aisle(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Demand(models.Model):
+    class Source(models.TextChoices):
+        MANAGER_ENTERED = 'manager_entered', 'Manager entered'
+        ML_PREDICTED = 'ml_predicted', 'ML predicted'
+        ESTIMATED = 'estimated', 'Estimated'
+
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
+    date = models.DateField()
+    hour = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
+    expected_customers = models.IntegerField()
+    cages_waiting = models.IntegerField()
+    source = models.CharField(max_length=20, choices=Source.choices, default=Source.MANAGER_ENTERED)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['zone', 'date', 'hour'], name='unique_zone_date_hour'),
+        ]
+
+    def __str__(self):
+        return f'{self.zone} {self.date} {self.hour:02d}:00'
