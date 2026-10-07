@@ -1,6 +1,16 @@
 from django.contrib import admin
 
-from .models import Aisle, Demand, Employee, EmployeeSkill, EmployeeTaskSpeed, Skill, Task, Zone
+from .models import (
+    Aisle,
+    Assignment,
+    Demand,
+    Employee,
+    EmployeeSkill,
+    EmployeeTaskSpeed,
+    Skill,
+    Task,
+    Zone,
+)
 
 admin.site.register(Employee)
 admin.site.register(Skill)
@@ -10,3 +20,4 @@ admin.site.register(Zone)
 admin.site.register(Aisle)
 admin.site.register(Demand)
 admin.site.register(Task)
+admin.site.register(Assignment)

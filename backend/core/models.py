@@ -141,3 +141,14 @@ class Task(models.Model):
     def __str__(self):
         zone = self.zone or 'Store-wide'
         return f'{zone} {self.task_type} {self.date} ({self.minutes_required} min)'
+
+
+class Assignment(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE)
+    date = models.DateField()
+    hour = models.IntegerField(validators=[MinValueValidator(0), MaxValueValidator(23)])
+    reason = models.TextField(blank=True)
+
+    def __str__(self):
+        return f'{self.employee} -> {self.zone} {self.date} {self.hour:02d}:00'
