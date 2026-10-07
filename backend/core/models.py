@@ -114,3 +114,30 @@ class Demand(models.Model):
 
     def __str__(self):
         return f'{self.zone} {self.date} {self.hour:02d}:00'
+
+
+class Task(models.Model):
+    class TaskType(models.TextChoices):
+        RECOVERY = 'recovery', 'Recovery'
+        GAP = 'gap', 'Gap'
+        TROLLEY = 'trolley', 'Trolley'
+
+    class Source(models.TextChoices):
+        MANAGER_ENTERED = 'manager_entered', 'Manager entered'
+        ESTIMATED = 'estimated', 'Estimated'
+        ML_PREDICTED = 'ml_predicted', 'ML predicted'
+
+    # Blank zone means the task is store-wide.
+    zone = models.ForeignKey(Zone, on_delete=models.CASCADE, null=True, blank=True)
+    date = models.DateField()
+    task_type = models.CharField(max_length=10, choices=TaskType.choices)
+    minutes_required = models.IntegerField()
+    # Blank deadline_hour means no deadline.
+    deadline_hour = models.IntegerField(
+        null=True, blank=True, validators=[MinValueValidator(0), MaxValueValidator(23)]
+    )
+    source = models.CharField(max_length=20, choices=Source.choices, default=Source.MANAGER_ENTERED)
+
+    def __str__(self):
+        zone = self.zone or 'Store-wide'
+        return f'{zone} {self.task_type} {self.date} ({self.minutes_required} min)'
